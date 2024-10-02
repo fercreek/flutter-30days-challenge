@@ -12,11 +12,24 @@ class _SecondPageState extends State<SecondPage> {
   String _name = '';
   String _email = '';
 
+  // Método para validar correo
+  String? _validateEmail(String? value) {
+    final emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    final regExp = RegExp(emailPattern);
+
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingrese un correo';
+    } else if (!regExp.hasMatch(value)) {
+      return 'Ingrese un correo válido';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Formulario - Día 7'),
+        title: const Text('Formulario con Validaciones - Día 8'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,9 +38,15 @@ class _SecondPageState extends State<SecondPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // Campo de Nombre
+              // Campo de Nombre con validación
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Nombre'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese su nombre';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   setState(() {
                     _name = value ?? '';
@@ -35,9 +54,10 @@ class _SecondPageState extends State<SecondPage> {
                 },
               ),
               const SizedBox(height: 16),
-              // Campo de Correo
+              // Campo de Correo con validación
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Correo'),
+                validator: _validateEmail,  // Utilizamos la función de validación personalizada
                 onSaved: (value) {
                   setState(() {
                     _email = value ?? '';
