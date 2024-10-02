@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'summary_page.dart'; // Importamos la pantalla de resumen
 
 class SecondPage extends StatefulWidget {
   const SecondPage({super.key});
@@ -12,7 +13,6 @@ class _SecondPageState extends State<SecondPage> {
   String _name = '';
   String _email = '';
 
-  // Método para validar correo
   String? _validateEmail(String? value) {
     final emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
     final regExp = RegExp(emailPattern);
@@ -29,7 +29,7 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Formulario con Validaciones - Día 8'),
+        title: const Text('Formulario con Resumen - Día 9'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,20 +48,16 @@ class _SecondPageState extends State<SecondPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  setState(() {
-                    _name = value ?? '';
-                  });
+                  _name = value ?? '';
                 },
               ),
               const SizedBox(height: 16),
               // Campo de Correo con validación
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Correo'),
-                validator: _validateEmail,  // Utilizamos la función de validación personalizada
+                validator: _validateEmail,
                 onSaved: (value) {
-                  setState(() {
-                    _email = value ?? '';
-                  });
+                  _email = value ?? '';
                 },
               ),
               const SizedBox(height: 20),
@@ -70,14 +66,20 @@ class _SecondPageState extends State<SecondPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
+                    // Navegar a la pantalla de resumen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SummaryPage(
+                          name: _name,
+                          email: _email,
+                        ),
+                      ),
+                    );
                   }
                 },
                 child: const Text('Enviar'),
               ),
-              const SizedBox(height: 20),
-              // Mostrar los datos ingresados
-              Text('Nombre: $_name'),
-              Text('Correo: $_email'),
             ],
           ),
         ),
