@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'summary_page.dart';
+import 'counter_provider.dart';
 
 class SecondPage extends StatefulWidget {
   const SecondPage({super.key});
@@ -12,9 +15,30 @@ class _SecondPageState extends State<SecondPage> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   String _email = '';
-  int _submissionCount = 0;  // Contador de envíos
 
-  // Validar el formato del correo
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedData();
+  }
+
+  // Método para cargar los datos guardados localmente
+  Future<void> _loadSavedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _name = prefs.getString('name') ?? '';
+      _email = prefs.getString('email') ?? '';
+    });
+  }
+
+  // Método para guardar los datos localmente
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('name', _name);
+    await prefs.setString('email', _email);
+  }
+
+  // Validar correo
   String? _validateEmail(String? value) {
     final emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
     final regExp = RegExp(emailPattern);
@@ -27,21 +51,24 @@ class _SecondPageState extends State<SecondPage> {
     return null;
   }
 
-  // Reiniciar todos los datos del formulario y el contador
+  // Reiniciar formulario y contador de envíos
   void _resetForm() {
-    _formKey.currentState!.reset();  // Resetea los campos del formulario
+    _formKey.currentState!.reset();
     setState(() {
       _name = '';
       _email = '';
-      _submissionCount = 0;  // Reiniciar contador
     });
+    Provider.of<CounterProvider>(context, listen: false).resetSubmissionCount();
+    _saveData(); // Guardar los datos vacíos
   }
 
   @override
   Widget build(BuildContext context) {
+    final counterProvider = Provider.of<CounterProvider>(context); // Acceso a CounterProvider
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Formulario con Contador - Día 10'),
+        title: const Text('Formulario con Persistencia'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -52,6 +79,7 @@ class _SecondPageState extends State<SecondPage> {
             children: <Widget>[
               // Campo de Nombre
               TextFormField(
+                initialValue: _name,
                 decoration: const InputDecoration(labelText: 'Nombre'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -66,6 +94,7 @@ class _SecondPageState extends State<SecondPage> {
               const SizedBox(height: 16),
               // Campo de Correo
               TextFormField(
+                initialValue: _email,
                 decoration: const InputDecoration(labelText: 'Correo'),
                 validator: _validateEmail,
                 onSaved: (value) {
@@ -78,11 +107,8 @@ class _SecondPageState extends State<SecondPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    // Incrementar el contador de envíos
-                    setState(() {
-                      _submissionCount++;
-                    });
-                    // Navegar a la pantalla de resumen
+                    counterProvider.incrementSubmissionCount(); // Incrementar el contador de envíos
+                    _saveData(); // Guardar los datos
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -98,7 +124,10 @@ class _SecondPageState extends State<SecondPage> {
               ),
               const SizedBox(height: 20),
               // Mostrar el contador de envíos
-              Text('Formulario enviado $_submissionCount veces', style: const TextStyle(fontSize: 16)),
+              Text(
+                'Formulario enviado ${counterProvider.submissionCount} veces',
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 20),
               // Botón para reiniciar el formulario y el contador
               ElevatedButton(
