@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'second_page.dart';
 import 'counter_provider.dart';
 import 'api_page.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const LoginPage(),  // Establece LoginPage como la pantalla principal
     );
   }
 }
@@ -41,6 +42,16 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
 
+  // Método para cerrar sesión y eliminar el token
+  Future<void> logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');  // Elimina el token
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),  // Redirige a la página de inicio de sesión
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final counterProvider = Provider.of<CounterProvider>(context);
@@ -49,6 +60,15 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              logout(context);  // Llama al método de logout
+            },
+            tooltip: 'Cerrar sesión',
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -108,12 +128,9 @@ class MyHomePage extends StatelessWidget {
             // Botón para ir a la pantalla de inicio de sesión
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
+                logout(context);  // Cierra sesión al presionar el botón
               },
-              child: const Text('Login'),
+              child: const Text('Cerrar Sesión'),
             ),
           ],
         ),

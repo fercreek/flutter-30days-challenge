@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'main.dart';  // Importa MyHomePage desde main.dart
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -10,47 +11,32 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _username = '';
-  String _password = '';
-  bool _isLoggingIn = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  // Método para iniciar sesión
-  Future<void> login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoggingIn = true;
-      });
-
-      final url = Uri.parse('https://api.ejemplo.com/login');  // Reemplaza con tu API
+  Future<void> _login() async {
+    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts'); // URL de prueba
+    try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'username': _username,
-          'password': _password,
+          'username': _usernameController.text,
+          'password': _passwordController.text,
         }),
+        headers: {'Content-Type': 'application/json'},
       );
 
-      if (response.statusCode == 200) {
-        // Suponiendo que la API devuelve un token
-        final data = json.decode(response.body);
-        final token = data['token'];
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inicio de sesión exitoso')),
+      if (response.statusCode == 201) {
+        // Simula una respuesta exitosa
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')),  // Navega a MyHomePage
         );
-
-        // Puedes navegar a otra página aquí o guardar el token
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Usuario o contraseña incorrectos')),
-        );
+        throw Exception('Error al iniciar sesión');
       }
-
-      setState(() {
-        _isLoggingIn = false;
-      });
+    } catch (error) {
+      print('Error: $error');
     }
   }
 
@@ -62,50 +48,23 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Usuario'),
-                onChanged: (value) {
-                  setState(() {
-                    _username = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, ingrese su usuario';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Contraseña'),
-                obscureText: true,
-                onChanged: (value) {
-                  setState(() {
-                    _password = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, ingrese su contraseña';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 40),
-              _isLoggingIn
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: login,
-                      child: const Text('Iniciar Sesión'),
-                    ),
-            ],
-          ),
+        child: Column(
+          children: [
+            TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(labelText: 'Usuario'),
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: 'Contraseña'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _login,
+              child: const Text('Iniciar Sesión'),
+            ),
+          ],
         ),
       ),
     );
