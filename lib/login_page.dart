@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'main.dart';
+import 'package:provider/provider.dart';
+import 'auth_provider.dart';
 import 'my_home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,29 +15,17 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
-    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts'); // URL de prueba
-    try {
-      final response = await http.post(
-        url,
-        body: json.encode({
-          'username': _usernameController.text,
-          'password': _passwordController.text,
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-      if (response.statusCode == 201) {
-        // Simula una respuesta exitosa
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')),  // Navega a MyHomePage
-        );
-      } else {
-        throw Exception('Error al iniciar sesión');
-      }
-    } catch (error) {
-      print('Error: $error');
-    }
+    // Simulamos un token tras un inicio de sesión exitoso
+    final token = 'fakeToken123';
+
+    // Guarda el token y actualiza el estado de autenticación
+    authProvider.login(token);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')),
+    );
   }
 
   @override
@@ -69,5 +56,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
