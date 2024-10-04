@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'second_page.dart'; // Importamos la segunda pantalla
+import 'package:provider/provider.dart';
+import 'second_page.dart';
+import 'counter_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CounterProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,9 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.purple, // Cambiamos el color primario a morado
+        primarySwatch: Colors.purple,
         textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontSize: 18, fontFamily: 'Arial'), // Cambiamos la fuente y tamaño del texto
+          bodyMedium: TextStyle(fontSize: 18, fontFamily: 'Arial'),
         ),
         useMaterial3: true,
       ),
@@ -24,36 +33,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _resetCounter() {
-    setState(() {
-      _counter = 0;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final counterProvider = Provider.of<CounterProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -61,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
             Text(
-              '$_counter',
+              '${counterProvider.counter}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 20),
@@ -69,12 +61,12 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 ElevatedButton(
-                  onPressed: _resetCounter,
+                  onPressed: counterProvider.resetCounter,
                   child: const Text('Reset'),
                 ),
                 const SizedBox(width: 20),
                 ElevatedButton(
-                  onPressed: _incrementCounter,
+                  onPressed: counterProvider.incrementCounter,
                   child: const Text('Increment'),
                 ),
               ],
@@ -93,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: counterProvider.incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
