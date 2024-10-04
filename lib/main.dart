@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'second_page.dart';
 import 'counter_provider.dart';
-import 'api_page.dart';  // Importa la nueva página de la API
+import 'api_page.dart';
+import 'submit_page.dart';  // Importa la nueva página
 
 void main() {
   runApp(
@@ -73,7 +74,6 @@ class MyHomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            // Botón para ir a SecondPage
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -84,15 +84,24 @@ class MyHomePage extends StatelessWidget {
               child: const Text('Go to Second Page'),
             ),
             const SizedBox(height: 20),
-            // Botón para ir a la ApiPage
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ApiPage()),  // Navega a la página de la API
+                  MaterialPageRoute(builder: (context) => const ApiPage()),
                 );
               },
               child: const Text('View API Data'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SubmitPage()),  // Navega a SubmitPage
+                );
+              },
+              child: const Text('Submit Data'),
             ),
           ],
         ),
