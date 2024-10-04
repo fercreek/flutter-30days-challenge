@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'second_page.dart';
 import 'counter_provider.dart';
 import 'api_page.dart';
-import 'submit_page.dart';  // Importa la nueva página
+import 'submit_page.dart';
+import 'login_page.dart';  // Importa la nueva página
 
 void main() {
   runApp(
@@ -98,10 +99,21 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SubmitPage()),  // Navega a SubmitPage
+                  MaterialPageRoute(builder: (context) => const SubmitPage()),
                 );
               },
               child: const Text('Submit Data'),
+            ),
+            const SizedBox(height: 20),
+            // Botón para ir a la pantalla de inicio de sesión
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('Login'),
             ),
           ],
         ),
