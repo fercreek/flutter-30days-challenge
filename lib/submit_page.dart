@@ -15,49 +15,70 @@ class _SubmitPageState extends State<SubmitPage> {
   String _body = '';
   bool _isSubmitting = false;
 
+  // Validación adicional para campos vacíos o demasiado cortos
+  String? _validateTitle(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, ingrese un título';
+    } else if (value.length < 5) {
+      return 'El título debe tener al menos 5 caracteres';
+    }
+    return null;
+  }
+
+  String? _validateBody(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, ingrese un contenido';
+    } else if (value.length < 10) {
+      return 'El contenido debe tener al menos 10 caracteres';
+    }
+    return null;
+  }
+
   // Función para enviar datos a la API
   Future<void> submitData() async {
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'title': _title,
-        'body': _body,
-        'userId': 1,  // Puedes ajustar estos valores según sea necesario
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      // Si la solicitud es exitosa, puedes mostrar un mensaje o hacer alguna acción
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Datos enviados exitosamente')),
-      );
+    if (_formKey.currentState!.validate()) {
       setState(() {
-        _title = '';
-        _body = '';
+        _isSubmitting = true;
       });
-    } else {
-      // Si hay un error
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al enviar los datos')),
-      );
-    }
 
-    setState(() {
-      _isSubmitting = false;
-    });
+      final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'title': _title,
+          'body': _body,
+          'userId': 1,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        // Si la solicitud es exitosa
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Datos enviados exitosamente')),
+        );
+        setState(() {
+          _title = '';
+          _body = '';
+        });
+      } else {
+        // Si ocurre un error en la solicitud
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al enviar los datos')),
+        );
+      }
+
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Enviar Datos a la API'),
+        title: const Text('Enviar Datos con Validación'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -65,6 +86,7 @@ class _SubmitPageState extends State<SubmitPage> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              // Campo de Título con validación
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Título'),
                 onChanged: (value) {
@@ -72,14 +94,10 @@ class _SubmitPageState extends State<SubmitPage> {
                     _title = value;
                   });
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese un título';
-                  }
-                  return null;
-                },
+                validator: _validateTitle,
               ),
               const SizedBox(height: 20),
+              // Campo de Contenido con validación
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Contenido'),
                 onChanged: (value) {
@@ -87,22 +105,13 @@ class _SubmitPageState extends State<SubmitPage> {
                     _body = value;
                   });
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el contenido';
-                  }
-                  return null;
-                },
+                validator: _validateBody,
               ),
               const SizedBox(height: 40),
               _isSubmitting
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          submitData();
-                        }
-                      },
+                      onPressed: submitData,
                       child: const Text('Enviar'),
                     ),
             ],
