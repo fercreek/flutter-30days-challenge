@@ -51,7 +51,7 @@ class MyHomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Estamos en el día 20',
+              'Estamos en el día 21',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),

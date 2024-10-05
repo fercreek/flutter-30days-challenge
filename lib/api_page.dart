@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'todo.dart'; // Importa el modelo Todo
+import 'api_service.dart';  // Importa el servicio de la API
 
 class ApiPage extends StatefulWidget {
   const ApiPage({Key? key}) : super(key: key);
@@ -11,49 +9,44 @@ class ApiPage extends StatefulWidget {
 }
 
 class _ApiPageState extends State<ApiPage> {
-  List<Todo> _todos = [];  // Almacenamos los datos como una lista de objetos Todo
+  late Future<List<dynamic>> _users;
 
   @override
   void initState() {
     super.initState();
-    fetchTodos();
-  }
-
-  Future<void> fetchTodos() async {
-    try {
-      final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/todos'));
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _todos = data.map((json) => Todo.fromJson(json)).toList(); // Parseamos JSON a objetos Todo
-        });
-      } else {
-        throw Exception('Error al cargar los datos');
-      }
-    } catch (error) {
-      print('Error: $error');
-    }
+    _users = ApiService().fetchUsers();  // Obtenemos los datos al iniciar la pantalla
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Tareas (API)'),
+        title: const Text('Datos de la API'),
       ),
-      body: _todos.isEmpty
-          ? const Center(child: CircularProgressIndicator())  // Indicador de carga
-          : ListView.builder(
-              itemCount: _todos.length,
+      body: FutureBuilder<List<dynamic>>(
+        future: _users,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());  // Muestra un spinner mientras carga
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));  // Muestra el error si ocurre
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No se encontraron datos'));  // Muestra si no hay datos
+          } else {
+            // Si los datos son exitosamente obtenidos, los mostramos en una lista
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
+                var user = snapshot.data![index];
                 return ListTile(
-                  title: Text(_todos[index].title),  // Usamos el título del objeto Todo
-                  leading: Icon(
-                    _todos[index].completed ? Icons.check_box : Icons.check_box_outline_blank,
-                  ),  // Icono basado en el estado de completado
+                  title: Text(user['name']),
+                  subtitle: Text(user['email']),
                 );
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }
