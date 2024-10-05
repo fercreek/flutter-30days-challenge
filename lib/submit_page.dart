@@ -1,75 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'api_service.dart';  // Importa el servicio de la API
 
 class SubmitPage extends StatefulWidget {
-  const SubmitPage({super.key});
+  const SubmitPage({Key? key}) : super(key: key);
 
   @override
-  State<SubmitPage> createState() => _SubmitPageState();
+  _SubmitPageState createState() => _SubmitPageState();
 }
 
 class _SubmitPageState extends State<SubmitPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _title = '';
-  String _body = '';
-  bool _isSubmitting = false;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
 
-  // Validación adicional para campos vacíos o demasiado cortos
-  String? _validateTitle(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, ingrese un título';
-    } else if (value.length < 5) {
-      return 'El título debe tener al menos 5 caracteres';
-    }
-    return null;
-  }
+  // Método para manejar el envío de datos
+  Future<void> _submitData() async {
+    setState(() {
+      _isLoading = true;  // Estado de carga activado
+    });
 
-  String? _validateBody(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, ingrese un contenido';
-    } else if (value.length < 10) {
-      return 'El contenido debe tener al menos 10 caracteres';
-    }
-    return null;
-  }
-
-  // Función para enviar datos a la API
-  Future<void> submitData() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isSubmitting = true;
-      });
-
-      final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'title': _title,
-          'body': _body,
-          'userId': 1,
-        }),
+    try {
+      final response = await ApiService().submitData(
+        _nameController.text,
+        _emailController.text,
       );
 
       if (response.statusCode == 201) {
-        // Si la solicitud es exitosa
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Datos enviados exitosamente')),
+          const SnackBar(content: Text('Datos enviados correctamente')),
         );
-        setState(() {
-          _title = '';
-          _body = '';
-        });
       } else {
-        // Si ocurre un error en la solicitud
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al enviar los datos')),
-        );
+        throw Exception('Error en el envío');
       }
-
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    } finally {
       setState(() {
-        _isSubmitting = false;
+        _isLoading = false;  // Estado de carga desactivado
       });
     }
   }
@@ -78,46 +47,39 @@ class _SubmitPageState extends State<SubmitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Enviar Datos con Validación'),
+        title: const Text('Enviar Datos'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              // Campo de Título con validación
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Título'),
-                onChanged: (value) {
-                  setState(() {
-                    _title = value;
-                  });
-                },
-                validator: _validateTitle,
-              ),
-              const SizedBox(height: 20),
-              // Campo de Contenido con validación
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Contenido'),
-                onChanged: (value) {
-                  setState(() {
-                    _body = value;
-                  });
-                },
-                validator: _validateBody,
-              ),
-              const SizedBox(height: 40),
-              _isSubmitting
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: submitData,
-                      child: const Text('Enviar'),
-                    ),
-            ],
-          ),
+        child: Column(
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(labelText: 'Nombre'),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Correo'),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 40),
+            _isLoading
+                ? const CircularProgressIndicator()  // Spinner durante la carga
+                : ElevatedButton(
+                    onPressed: _submitData,
+                    child: const Text('Enviar Datos'),
+                  ),
+          ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    super.dispose();
   }
 }

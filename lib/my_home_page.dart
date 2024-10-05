@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'counter_provider.dart';
 import 'second_page.dart';
 import 'api_page.dart';
-import 'submit_page.dart';
+import 'submit_page.dart';  // Importa SubmitPage
 import 'login_page.dart';  // Importa la página de inicio de sesión
 
 class MyHomePage extends StatelessWidget {
@@ -51,7 +51,7 @@ class MyHomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Estamos en el día 21',
+              'Estamos en el día 22',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
@@ -74,39 +74,13 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SecondPage()),
-                );
-              },
-              child: const Text('Go to Second Page'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ApiPage()),
-                );
-              },
-              child: const Text('View API Data'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SubmitPage()),
+                  MaterialPageRoute(builder: (context) => const SubmitPage()),  // Navega a SubmitPage
                 );
               },
               child: const Text('Submit Data'),
             ),
             const SizedBox(height: 20),
-            // Botón para ir a la pantalla de inicio de sesión
-            ElevatedButton(
-              onPressed: () {
-                logout(context);  // Cierra sesión al presionar el botón
-              },
-              child: const Text('Cerrar Sesión'),
-            ),
+            // Otras opciones como navegación a API, SecondPage, etc.
           ],
         ),
       ),
