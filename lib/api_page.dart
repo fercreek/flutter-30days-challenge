@@ -12,42 +12,48 @@ class _ApiPageState extends State<ApiPage> {
   late ScrollController _scrollController;
   late Future<List<dynamic>> _users;
   bool _isLoading = false;
-  int _currentMax = 10; // Límite inicial de carga
+  int _currentMax = 10; 
+  bool _hasError = false;  
 
   @override
   void initState() {
     super.initState();
-    _users = ApiService().fetchUsers();  // Obtenemos los datos al iniciar la pantalla
+    _users = ApiService().fetchUsers(); 
     _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);  // Listener para el scroll
+    _scrollController.addListener(_scrollListener); 
   }
 
-  // Controlador del scroll que detecta cuando se llega al final
   void _scrollListener() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
-      _loadMoreData();  // Cargar más datos cuando se llega al final
+      _loadMoreData();  
     }
   }
 
-  // Función para simular la carga de más datos
-  void _loadMoreData() async {
+  Future<void> _loadMoreData() async {
     setState(() {
       _isLoading = true;
+      _hasError = false;  
     });
 
-    await Future.delayed(const Duration(seconds: 2));  // Simula un retardo de carga
-
-    setState(() {
-      _currentMax += 10;  // Incrementa el límite de carga
-      _isLoading = false;
-    });
+    try {
+      await Future.delayed(const Duration(seconds: 2));
+      setState(() {
+        _currentMax += 10;  
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _hasError = true;  
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,  // Cambiado a azul
+        backgroundColor: Colors.blue,  
         title: const Text(
           'Datos de la API',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
@@ -60,22 +66,10 @@ class _ApiPageState extends State<ApiPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator(color: Colors.blue),  // Muestra un spinner mientras carga
+                child: CircularProgressIndicator(color: Colors.blue),  
               );
             } else if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 50, color: Colors.redAccent),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Error: ${snapshot.error}',
-                      style: const TextStyle(fontSize: 18, color: Colors.redAccent),
-                    ),
-                  ],
-                ),
-              );
+              return _buildErrorUI();
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(
                 child: Text(
@@ -84,14 +78,15 @@ class _ApiPageState extends State<ApiPage> {
                 ),
               );
             } else {
-              // Si los datos son exitosamente obtenidos, los mostramos en una lista
-              return RepaintBoundary(  // Usamos RepaintBoundary para optimizar redibujos
+              return RepaintBoundary(  
                 child: ListView.builder(
-                  controller: _scrollController,  // Añadimos el controlador del scroll
+                  controller: _scrollController,  
                   itemCount: (_currentMax <= snapshot.data!.length) ? _currentMax + 1 : snapshot.data!.length,
                   itemBuilder: (context, index) {
                     if (index == _currentMax && _currentMax <= snapshot.data!.length) {
-                      return const Center(child: CircularProgressIndicator(color: Colors.blue));  // Loader al final
+                      return const Center(
+                        child: CircularProgressIndicator(color: Colors.blue),  
+                      );
                     }
 
                     var user = snapshot.data![index];
@@ -128,9 +123,31 @@ class _ApiPageState extends State<ApiPage> {
     );
   }
 
+  Widget _buildErrorUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 50, color: Colors.redAccent),
+          const SizedBox(height: 10),
+          const Text(
+            'Ocurrió un error al cargar los datos',
+            style: TextStyle(fontSize: 18, color: Colors.redAccent),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _loadMoreData,
+            child: const Text('Reintentar'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
-    _scrollController.dispose();  // Limpiamos el controlador del scroll
+    _scrollController.dispose();  
     super.dispose();
   }
 }
