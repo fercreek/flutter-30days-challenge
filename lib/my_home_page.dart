@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'counter_provider.dart';
 import 'second_page.dart';
 import 'api_page.dart';
-import 'submit_page.dart';  // Importa SubmitPage
+import 'submit_page.dart';
 import 'login_page.dart';  // Importa la página de inicio de sesión
 
 class MyHomePage extends StatelessWidget {
@@ -28,8 +28,11 @@ class MyHomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(title),
+        backgroundColor: Colors.deepPurple,
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -40,53 +43,116 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '${counterProvider.counter}',
-              style: Theme.of(context).textTheme.headlineMedium,
+            const Text(
+              '¡Bienvenido!',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+              ),
             ),
             const SizedBox(height: 20),
             const Text(
-              'Estamos en el día 22',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'Has presionado el botón esta cantidad de veces:',
+              style: TextStyle(fontSize: 18),
             ),
-            const SizedBox(height: 20),
+            Text(
+              '${counterProvider.counter}',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple.shade700,
+              ),
+            ),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 ElevatedButton(
                   onPressed: counterProvider.resetCounter,
-                  child: const Text('Reset'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                  child: const Text('Resetear', style: TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: counterProvider.incrementCounter,
-                  child: const Text('Increment'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    backgroundColor: Colors.green,
+                  ),
+                  child: const Text('Incrementar', style: TextStyle(fontSize: 16)),
                 ),
               ],
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SecondPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                backgroundColor: Colors.deepPurple,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: const Text(
+                'Ir a la Segunda Página',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SubmitPage()),  // Navega a SubmitPage
+                  MaterialPageRoute(builder: (context) => const ApiPage()),
                 );
               },
-              child: const Text('Submit Data'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                backgroundColor: Colors.deepPurple,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: const Text(
+                'Ver Datos de la API',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
             ),
             const SizedBox(height: 20),
-            // Otras opciones como navegación a API, SecondPage, etc.
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SubmitPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                backgroundColor: Colors.deepPurple,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: const Text(
+                'Enviar Datos',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: counterProvider.incrementCounter,
-        tooltip: 'Increment',
+        backgroundColor: Colors.deepPurple,
+        tooltip: 'Incrementar',
         child: const Icon(Icons.add),
       ),
     );
