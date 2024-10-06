@@ -31,9 +31,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],  // Fondo claro para mejor contraste
       appBar: AppBar(
         title: const Text('Iniciar Sesión', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blue,  // Cambiado a azul
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -44,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             const Icon(
               Icons.lock_outline,
               size: 100,
-              color: Colors.deepPurple,
+              color: Colors.blue,  // Cambiado a azul
             ),  // Icono superior
             const SizedBox(height: 20),
             const Text(
@@ -52,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+                color: Colors.blue,  // Cambiado a azul
               ),
             ),
             const SizedBox(height: 40),
@@ -60,10 +61,16 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.person, color: Colors.deepPurple),
+                prefixIcon: const Icon(Icons.person, color: Colors.blue),  // Cambiado a azul
                 labelText: 'Usuario',
-                border: OutlineInputBorder(
+                labelStyle: const TextStyle(color: Colors.blue),  // Cambiado a azul
+                focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.blue, width: 2),  // Cambiado a azul
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.blue),  // Cambiado a azul
                 ),
               ),
             ),
@@ -72,10 +79,16 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock, color: Colors.deepPurple),
+                prefixIcon: const Icon(Icons.lock, color: Colors.blue),  // Cambiado a azul
                 labelText: 'Contraseña',
-                border: OutlineInputBorder(
+                labelStyle: const TextStyle(color: Colors.blue),  // Cambiado a azul
+                focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.blue, width: 2),  // Cambiado a azul
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.blue),  // Cambiado a azul
                 ),
               ),
               obscureText: true,
@@ -88,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: _login,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15),
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: Colors.blue,  // Cambiado a azul
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -107,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
               },
               child: const Text(
                 '¿Olvidaste tu contraseña?',
-                style: TextStyle(color: Colors.deepPurple),
+                style: TextStyle(color: Colors.blue),  // Cambiado a azul
               ),
             ),
           ],

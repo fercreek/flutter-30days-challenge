@@ -72,7 +72,7 @@ class _SubmitPageState extends State<SubmitPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Formulario de Envío'),
-        backgroundColor: Colors.deepPurple,  // Mejoramos el color del AppBar
+        backgroundColor: Colors.blue,  // Mejoramos el color del AppBar
       ),
       body: SingleChildScrollView(  // Añadimos scroll por si el teclado cubre los campos
         padding: const EdgeInsets.all(20.0),  // Añadimos padding en toda la pantalla
@@ -85,7 +85,7 @@ class _SubmitPageState extends State<SubmitPage> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,  // Color llamativo para el título
+                  color: Colors.blue,  // Color llamativo para el título
                 ),
               ),
             ),
@@ -104,9 +104,10 @@ class _SubmitPageState extends State<SubmitPage> {
                     controller: _nameController,
                     decoration: InputDecoration(
                       hintText: 'Ingresa tu nombre',
+                      prefixIcon: const Icon(Icons.person),  // Icono en el campo de nombre
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.deepPurple),
+                        borderSide: const BorderSide(color: Colors.blue),
                       ),
                     ),
                     validator: _validateName,  // Validación del nombre
@@ -121,9 +122,10 @@ class _SubmitPageState extends State<SubmitPage> {
                     controller: _emailController,
                     decoration: InputDecoration(
                       hintText: 'Ingresa tu correo',
+                      prefixIcon: const Icon(Icons.email),  // Icono en el campo de email
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.deepPurple),
+                        borderSide: const BorderSide(color: Colors.blue),
                       ),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -132,13 +134,15 @@ class _SubmitPageState extends State<SubmitPage> {
                   const SizedBox(height: 40),
                   Center(
                     child: _isLoading
-                        ? const CircularProgressIndicator()  // Spinner durante la carga
+                        ? const CircularProgressIndicator(  // Spinner durante la carga
+                            color: Colors.blue,  // Cambiado a azul
+                          )
                         : SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 15),
-                                backgroundColor: Colors.deepPurple,  // Botón estilizado
+                                backgroundColor: Colors.blue,  // Botón estilizado
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -149,8 +153,8 @@ class _SubmitPageState extends State<SubmitPage> {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white
-                                  ),
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),

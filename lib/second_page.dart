@@ -68,7 +68,11 @@ class _SecondPageState extends State<SecondPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Formulario con Persistencia'),
+        title: const Text(
+          'Formulario con Persistencia',
+          style: TextStyle(color: Colors.white),
+          ),
+        backgroundColor: Colors.blue,  // Cambiado a azul
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -102,25 +106,36 @@ class _SecondPageState extends State<SecondPage> {
                 },
               ),
               const SizedBox(height: 20),
-              // Botón para enviar el formulario
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    counterProvider.incrementSubmissionCount(); // Incrementar el contador de envíos
-                    _saveData(); // Guardar los datos
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SummaryPage(
-                          name: _name,
-                          email: _email,
+              // Añadir Hero Animation al botón de envío
+              Hero(
+                tag: 'submitPageButton',  // Identificador único para la animación
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      counterProvider.incrementSubmissionCount(); // Incrementar el contador de envíos
+                      _saveData(); // Guardar los datos
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SummaryPage(
+                            name: _name,
+                            email: _email,
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Enviar'),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    backgroundColor: Colors.blue,  // Cambiado a azul
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Text(
+                    'Enviar',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               // Mostrar el contador de envíos
