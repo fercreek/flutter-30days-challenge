@@ -5,7 +5,8 @@ import 'counter_provider.dart';
 import 'second_page.dart';
 import 'api_page.dart';
 import 'submit_page.dart';
-import 'login_page.dart';  // Importa la página de inicio de sesión
+import 'login_page.dart';
+import 'theme_provider.dart';  // Importa el ThemeProvider
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -32,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final counterProvider = Provider.of<CounterProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);  // Accedemos al ThemeProvider
 
     return Scaffold(
       appBar: AppBar(
@@ -47,6 +49,15 @@ class _MyHomePageState extends State<MyHomePage> {
               logout(context);  // Llama al método de logout
             },
             tooltip: 'Cerrar sesión',
+          ),
+          // Añadimos el Switch para alternar el tema
+          Switch(
+            value: themeProvider.isDarkTheme,
+            onChanged: (value) {
+              themeProvider.toggleTheme();  // Alterna el tema
+            },
+            activeColor: Colors.white,
+            activeTrackColor: Colors.blue.shade700,
           ),
         ],
       ),
@@ -114,7 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             const SizedBox(height: 30),
-            // Añadir Hero Animation al botón para la Segunda Página
             Hero(
               tag: 'secondPageButton',  // Identificador único para la animación
               child: AnimatedContainer(
@@ -141,7 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             const SizedBox(height: 20),
-            // Añadir Hero Animation al botón de la API
             Hero(
               tag: 'apiPageButton',  // Identificador único para la animación
               child: AnimatedContainer(
@@ -168,7 +177,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             const SizedBox(height: 20),
-            // Añadir Hero Animation al botón de Submit
             Hero(
               tag: 'submitPageButton',  // Identificador único para la animación
               child: AnimatedContainer(

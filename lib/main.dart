@@ -10,13 +10,15 @@ import 'login_page.dart';
 import 'my_home_page.dart'; 
 import 'splash_screen.dart';
 import 'check_auth.dart';
+import 'theme_provider.dart';  // Importamos el ThemeProvider
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CounterProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),  // Agrega el AuthProvider
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),  // Agregamos el ThemeProvider
       ],
       child: const MyApp(),
     ),
@@ -28,15 +30,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontSize: 18, fontFamily: 'Arial'),
-        ),
-        useMaterial3: true,
-      ),
+      theme: themeProvider.isDarkTheme ? ThemeData.dark() : ThemeData.light(),
       home: const CheckAuth(),  // Pantalla inicial de verificación de autenticación
     );
   }
