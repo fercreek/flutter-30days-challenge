@@ -1,0 +1,14 @@
+{
+  "welcome": "Welcome!",
+  "counterMessage": "You have pressed the button this many times:",
+  "reset": "Reset",
+  "increment": "Increment",
+  "goToSecondPage": "Go to Second Page",
+  "viewApiData": "View API Data",
+  "submitData": "Submit Data",
+  "logout": "Logout",
+  "switchLanguage": "Switch Language",
+  "secondPageButton": "Go to Second Page",
+  "apiPageButton": "View API Data",
+  "submitPageButton": "Submit Data"
+}
