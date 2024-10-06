@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_provider.dart';
-import 'second_page.dart';
 import 'counter_provider.dart';
-import 'api_page.dart';
-import 'submit_page.dart';
-import 'login_page.dart';
-import 'my_home_page.dart'; 
-import 'splash_screen.dart';
+import 'locale_provider.dart';
+import 'theme_provider.dart';
+import 'app_localizations.dart';  // Importamos AppLocalizations
 import 'check_auth.dart';
-import 'theme_provider.dart';  // Importamos el ThemeProvider
 
 void main() {
   runApp(
@@ -18,7 +14,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => CounterProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),  // Agregamos el ThemeProvider
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),  // Soporte de idioma
       ],
       child: const MyApp(),
     ),
@@ -26,16 +23,28 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
       title: 'Flutter Demo',
       theme: themeProvider.isDarkTheme ? ThemeData.dark() : ThemeData.light(),
-      home: const CheckAuth(),  // Pantalla inicial de verificación de autenticación
+      locale: localeProvider.locale,  // Ajusta el idioma dinámico
+      supportedLocales: const [
+        Locale('en', ''),  // Inglés
+        Locale('es', ''),  // Español
+      ],
+      localizationsDelegates: const [
+        AppLocalizationsDelegate(),  // Nuestra clase de localización
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: const CheckAuth(),
     );
   }
 }

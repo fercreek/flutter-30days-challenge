@@ -7,6 +7,8 @@ import 'api_page.dart';
 import 'submit_page.dart';
 import 'login_page.dart';
 import 'theme_provider.dart';  // Importa el ThemeProvider
+import 'locale_provider.dart';  // Importa LocaleProvider
+import 'app_localizations.dart';  // Importa AppLocalizations para el manejo de idiomas
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -34,12 +36,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final counterProvider = Provider.of<CounterProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);  // Accedemos al ThemeProvider
+    final localeProvider = Provider.of<LocaleProvider>(context);  // Accedemos al LocaleProvider
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,  // Cambiado a azul
+        backgroundColor: themeProvider.isDarkTheme ? Colors.grey[900] : Colors.blue,  // Color dinámico según el tema
         title: Text(
-          widget.title,
+          AppLocalizations.of(context)!.translate('welcome'),  // Usamos la traducción para "Bienvenido"
           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         actions: [
@@ -48,16 +51,36 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               logout(context);  // Llama al método de logout
             },
-            tooltip: 'Cerrar sesión',
+            tooltip: AppLocalizations.of(context)!.translate('logout'),  // Traducción para "Cerrar sesión"
           ),
-          // Añadimos el Switch para alternar el tema
           Switch(
             value: themeProvider.isDarkTheme,
             onChanged: (value) {
               themeProvider.toggleTheme();  // Alterna el tema
             },
             activeColor: Colors.white,
-            activeTrackColor: Colors.blue.shade700,
+            activeTrackColor: themeProvider.isDarkTheme ? Colors.grey : Colors.blue.shade700,
+          ),
+          // Dropdown para cambiar de idioma
+          DropdownButton<Locale>(
+            value: localeProvider.locale,
+            icon: const Icon(Icons.language, color: Colors.white),
+            dropdownColor: themeProvider.isDarkTheme ? Colors.grey[800] : Colors.white,
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                localeProvider.setLocale(newLocale.languageCode);  // Cambia el idioma
+              }
+            },
+            items: const [
+              DropdownMenuItem(
+                value: Locale('en'),
+                child: Text('English'),
+              ),
+              DropdownMenuItem(
+                value: Locale('es'),
+                child: Text('Español'),
+              ),
+            ],
           ),
         ],
       ),
@@ -66,18 +89,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              '¡Bienvenido!',
+            Text(
+              AppLocalizations.of(context)!.translate('welcome'),  // Usamos la traducción para "Bienvenido"
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue,  // Cambiado a azul
+                color: themeProvider.isDarkTheme ? Colors.white : Colors.blue,  // Color dinámico
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Has presionado el botón esta cantidad de veces:',
-              style: TextStyle(fontSize: 18),
+            Text(
+              AppLocalizations.of(context)!.translate('counterMessage'),  // Traducción para el mensaje del contador
+              style: const TextStyle(fontSize: 18),
             ),
             AnimatedOpacity(
               opacity: _isVisible ? 1.0 : 0.0,  // Cambia la opacidad del contador
@@ -87,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,  // Cambiado a azul
+                  color: themeProvider.isDarkTheme ? Colors.white : Colors.blue.shade700,  // Color dinámico
                 ),
               ),
             ),
@@ -140,12 +163,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 15),
-                    backgroundColor: Colors.blue,  // Cambiado a azul
+                    backgroundColor: themeProvider.isDarkTheme ? Colors.grey[800] : Colors.blue,  // Color dinámico
                     minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: const Text(
-                    'Ir a la Segunda Página',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('secondPageButton'),  // Traducción para el botón "Ir a Segunda Página"
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
@@ -166,12 +189,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 15),
-                    backgroundColor: Colors.blue,  // Cambiado a azul
+                    backgroundColor: themeProvider.isDarkTheme ? Colors.grey[800] : Colors.blue,  // Color dinámico
                     minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: const Text(
-                    'Ver Datos de la API',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('apiPageButton'),  // Traducción para el botón "Ver Datos de la API"
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
@@ -192,12 +215,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 15),
-                    backgroundColor: Colors.blue,  // Cambiado a azul
+                    backgroundColor: themeProvider.isDarkTheme ? Colors.grey[800] : Colors.blue,  // Color dinámico
                     minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: const Text(
-                    'Enviar Datos',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('submitPageButton'),  // Traducción para el botón "Enviar Datos"
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),
@@ -211,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _isVisible = !_isVisible;  // Cambia la visibilidad del contador
           });
         },
-        backgroundColor: Colors.blue,  // Cambiado a azul
+        backgroundColor: themeProvider.isDarkTheme ? Colors.grey[800] : Colors.blue,  // Color dinámico
         tooltip: 'Incrementar',
         child: const Icon(Icons.add),
       ),
