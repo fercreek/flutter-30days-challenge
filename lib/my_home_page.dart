@@ -7,10 +7,17 @@ import 'api_page.dart';
 import 'submit_page.dart';
 import 'login_page.dart';  // Importa la página de inicio de sesión
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  bool _isVisible = true;  // Controla la visibilidad para la animación de opacidad
 
   // Método para cerrar sesión y eliminar el token
   Future<void> logout(BuildContext context) async {
@@ -30,8 +37,8 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         title: Text(
-          title,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          widget.title,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         actions: [
           IconButton(
@@ -61,12 +68,16 @@ class MyHomePage extends StatelessWidget {
               'Has presionado el botón esta cantidad de veces:',
               style: TextStyle(fontSize: 18),
             ),
-            Text(
-              '${counterProvider.counter}',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple.shade700,
+            AnimatedOpacity(
+              opacity: _isVisible ? 1.0 : 0.0,  // Cambia la opacidad del contador
+              duration: const Duration(seconds: 1),  // Duración de la animación
+              child: Text(
+                '${counterProvider.counter}',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple.shade700,
+                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -74,83 +85,112 @@ class MyHomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 ElevatedButton(
-                  onPressed: counterProvider.resetCounter,
+                  onPressed: () {
+                    setState(() {
+                      _isVisible = !_isVisible;  // Cambia la visibilidad para animar el contador
+                    });
+                    counterProvider.resetCounter();
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     backgroundColor: Colors.redAccent,
                   ),
-                  child: const Text('Resetear', style: TextStyle(fontSize: 16)),
+                  child: const Text('Resetear', style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
                 const SizedBox(width: 20),
                 ElevatedButton(
-                  onPressed: counterProvider.incrementCounter,
+                  onPressed: () {
+                    setState(() {
+                      _isVisible = !_isVisible;  // Cambia la visibilidad para animar el contador
+                    });
+                    counterProvider.incrementCounter();
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     backgroundColor: Colors.green,
                   ),
-                  child: const Text('Incrementar', style: TextStyle(fontSize: 16)),
+                  child: const Text('Incrementar', style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
               ],
             ),
             const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SecondPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.deepPurple,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text(
-                'Ir a la Segunda Página',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ApiPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.deepPurple,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text(
-                'Ver Datos de la API',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 500),  // Duración de la animación
+              curve: Curves.easeInOut,  // Suaviza la animación
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SecondPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  backgroundColor: Colors.deepPurple,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'Ir a la Segunda Página',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SubmitPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.deepPurple,
-                minimumSize: const Size(double.infinity, 50),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ApiPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  backgroundColor: Colors.deepPurple,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'Ver Datos de la API',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
               ),
-              child: const Text(
-                'Enviar Datos',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SubmitPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  backgroundColor: Colors.deepPurple,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'Enviar Datos',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
               ),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: counterProvider.incrementCounter,
+        onPressed: () {
+          setState(() {
+            _isVisible = !_isVisible;  // Cambia la visibilidad del contador
+          });
+        },
         backgroundColor: Colors.deepPurple,
         tooltip: 'Incrementar',
         child: const Icon(Icons.add),
